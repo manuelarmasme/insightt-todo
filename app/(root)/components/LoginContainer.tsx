@@ -86,6 +86,7 @@ export default function LoginContainer() {
           <TextField
             label="Email"
             type="email"
+            disabled={isLoading}
             fullWidth
             margin="normal"
             value={formData.email}
@@ -97,6 +98,7 @@ export default function LoginContainer() {
           <TextField
             label="Password"
             type="password"
+            disabled={isLoading}
             fullWidth
             margin="normal"
             value={formData.password}

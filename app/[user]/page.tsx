@@ -1,3 +1,10 @@
+import NavBar from "./components/navbar";
+
 export default function UserTasksPage() {
-  return <div>User Tasks Page</div>;
+  return (
+    <>
+      <NavBar />
+      Task container
+    </>
+  );
 }
