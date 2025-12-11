@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Amplify } from "aws-amplify";
-import outputs from '@/amplify_outputs.json';
+import ConfigureAmplifyClientSide from "./components/ConfigureAmplifyClientSide";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,8 +18,6 @@ export const metadata: Metadata = {
   description: "A simple todo app built with Next.js and Tailwind CSS",
 };
 
-Amplify.configure(outputs, { ssr: true });
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,7 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main className="flex h-full items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+        <ConfigureAmplifyClientSide />
+        <main className="flex h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
           {children}
         </main>
       </body>
