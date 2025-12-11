@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -15,22 +15,19 @@ import {
   Snackbar,
 } from "@mui/material";
 import { useAuth } from "@/app/lib/hooks/useAuth";
-import { verifyEmailSchema } from "@/app/lib/schemas/auth";
+import { signInSchema } from "@/app/lib/schemas/auth";
 import z from "zod";
 
-export default function VerifyEmailContainer() {
+export default function LoginContainer() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const emailParam = searchParams.get("email");
-
-  const { handleConfirmSignUp, isLoading } = useAuth();
+  const { handleSignIn, isLoading, getUser } = useAuth();
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [formData, setFormData] = useState({
-    email: emailParam,
-    code: "",
+    email: "",
+    password: "",
   });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -39,7 +36,7 @@ export default function VerifyEmailContainer() {
 
     try {
       // Validate with Zod
-      const validatedData = verifyEmailSchema.safeParse(formData);
+      const validatedData = signInSchema.safeParse(formData);
 
       if (!validatedData.success) {
         const flattenedErrors = z.flattenError(validatedData.error);
@@ -47,72 +44,80 @@ export default function VerifyEmailContainer() {
         setErrors(flattenedErrors.fieldErrors as Record<string, string>);
         return;
       } else {
-        await handleConfirmSignUp(formData.email as string, formData.code);
+        await handleSignIn(formData.email, formData.password);
+
+        // Get userId after successful login
+        const user = await getUser();
 
         setSuccess(true);
-        setToastMessage("Email verified successfully! Redirecting to login...");
+        setToastMessage("Login successful! Redirecting...");
         setShowToast(true);
-        setFormData({ email: "", code: "" });
-        router.push("/");
+
+        if (user) {
+          router.push(`/${user.userId}`);
+        }
       }
     } catch (err) {
       setToastMessage(
         err instanceof Error ? err.message : "An unexpected error occurred"
       );
-
       setShowToast(true);
-      setSuccess(false);
     }
   };
+  const handleChange =
+    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+      // Clear error for this field when user starts typing
+      if (errors[field]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        });
+      }
+    };
 
   return (
     <Card sx={{ maxWidth: 400, mt: 5, padding: 3 }}>
-      <CardHeader title="Verify Your Email" />
+      <CardHeader title="Sign In" />
 
       <CardContent>
         <Box component="form" onSubmit={handleSubmit}>
-          <Typography variant="body2" sx={{ mb: 2 }}>
-            Enter the verification code sent to your email address.
-          </Typography>
-
           <TextField
             label="Email"
             type="email"
             fullWidth
-            disabled
             margin="normal"
             value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
+            onChange={handleChange("email")}
             error={!!errors.email}
             helperText={errors.email}
           />
 
           <TextField
-            label="Verification Code"
+            label="Password"
+            type="password"
             fullWidth
             margin="normal"
-            value={formData.code}
-            onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-            error={!!errors.code}
-            helperText={errors.code}
+            value={formData.password}
+            onChange={handleChange("password")}
+            error={!!errors.password}
+            helperText={errors.password}
           />
 
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            aria-label="Verify email"
             disabled={isLoading}
             sx={{ mt: 3, mb: 2 }}
           >
-            {isLoading ? <CircularProgress size={24} /> : "Verify Email"}
+            {isLoading ? <CircularProgress size={24} /> : "Sign In"}
           </Button>
 
           <Typography variant="body2" align="center">
-            Already verified?{" "}
-            <Button onClick={() => router.push("/login")}>Sign In</Button>
+            Don&apos;t have an account?{" "}
+            <Button onClick={() => router.push("/signup")}>Sign Up</Button>
           </Typography>
         </Box>
       </CardContent>
