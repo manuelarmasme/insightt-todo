@@ -11,6 +11,7 @@ async function getAuthToken(): Promise<string> {
     const session = await fetchAuthSession();
     const idToken = session.tokens?.idToken?.toString();
     
+    
     if (!idToken) {
       throw new Error('No authentication token available');
     }

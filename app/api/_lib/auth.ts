@@ -22,7 +22,7 @@ export async function validateToken(request: Request): Promise<AuthResult> {
   try {
     // Extract token from Authorization header
     const authHeader = request.headers.get('authorization');
-    
+
     if (!authHeader?.startsWith('Bearer ')) {
       return { authenticated: false, userId: null, email: null };
     }
@@ -31,7 +31,7 @@ export async function validateToken(request: Request): Promise<AuthResult> {
 
     // Verify the JWT token with AWS Cognito
     const payload = await verifier.verify(token);
-    
+
     return {
       authenticated: true,
       userId: payload.sub, // Cognito user ID (sub claim)
