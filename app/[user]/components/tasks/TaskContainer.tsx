@@ -3,8 +3,9 @@ import { useEffect } from "react";
 import CreateTaskForm from "./CreateTaskForm";
 import { useTaskStore } from "@/app/lib/stores/taskStore";
 import ListTasks from "./ListTasks";
-import Loading from "../../loading";
+import Loading from "../ui/loading";
 import { Card } from "@mui/material";
+import Error from "../ui/error";
 
 export default function TaskContainer() {
   const { tasks, status, error, fetchTasks } = useTaskStore();
@@ -19,9 +20,7 @@ export default function TaskContainer() {
         <Loading message="Loading your tasks..." />
       )}
 
-      {status === "error" && (
-        <p className="text-sm font-medium text-rose-600">{error}</p>
-      )}
+      {status === "error" && <Error message={"An unknown error occurred."} />}
 
       {status === "done" && (
         <>
