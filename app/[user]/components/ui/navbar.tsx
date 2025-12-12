@@ -1,32 +1,28 @@
-"use client";
-
-import { useAuth } from "@/app/lib/hooks/useAuth";
-import { Button } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { AppBar, Toolbar, Typography } from "@mui/material";
+import LogoutButton from "./LogoutButton";
 
 export default function NavBar() {
-  const { isLoading, handleSignOut } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    // Implement logout functionality here
-
-    await handleSignOut();
-    router.push("/");
-  };
-
   return (
-    <header className="w-full flex-row items-center justify-between">
-      <div>logo task</div>
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        backgroundColor: "rgba(71, 85, 105, 1)",
+        borderRadius: "16px",
+        marginBottom: "24px",
+      }}
+    >
+      <Toolbar>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1, fontWeight: 600 }}
+        >
+          My todo app
+        </Typography>
 
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={isLoading}
-        onClick={handleLogout}
-      >
-        Logout
-      </Button>
-    </header>
+        <LogoutButton />
+      </Toolbar>
+    </AppBar>
   );
 }

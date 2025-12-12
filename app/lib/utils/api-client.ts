@@ -87,6 +87,55 @@ export async function getTasks(): Promise<TaskResponse[]> {
 }
 
 /**
+ * Update a task
+ * @param taskId - The ID of the task to update
+ * @param data - The task data to update (title, etc.)
+ */
+export async function updateTask(taskId: string, data: { title?: string }): Promise<void> {
+  const response = await fetchWithAuth(`/api/tasks?id=${taskId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to update task' }));
+    throw new Error(error.error || 'Failed to update task');
+  }
+}
+
+/**
+ * Update task completion status
+ * @param taskId - The ID of the task to update
+ * @param completed - The new completion status
+ */
+export async function updateTaskComplete(taskId: string, completed: boolean): Promise<void> {
+  const response = await fetchWithAuth(`/api/tasks?id=${taskId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ completed }),
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to update task' }));
+    throw new Error(error.error || 'Failed to update task');
+  }
+}
+
+/**
+ * Delete a task
+ * @param taskId - The ID of the task to delete
+ */
+export async function deleteTask(taskId: string): Promise<void> {
+  const response = await fetchWithAuth(`/api/tasks?id=${taskId}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to delete task' }));
+    throw new Error(error.error || 'Failed to delete task');
+  }
+}
+
+/**
  * Handle API errors and check if user needs to re-authenticate
  */
 export function handleApiError(error: unknown): string {
