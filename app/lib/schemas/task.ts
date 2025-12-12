@@ -11,6 +11,10 @@ export const updateTaskSchema = z.object({
   completed: z.boolean().optional()
 });
 
+export const completedTaskSchema = z.object({
+  completed: z.boolean()
+});
+
 // Schema for task response from database
 export const taskResponseSchema = z.object({
   _id: z.string(),
