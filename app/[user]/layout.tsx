@@ -12,7 +12,7 @@ export default function UserTaskLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="flex flex-col  w-full p-4 max-w-7xl h-full mx-auto bg-zinc-50 font-sans dark:bg-black">
+    <main className="flex flex-col  w-full p-4 max-w-4xl h-full mx-auto bg-zinc-50 font-sans dark:bg-black">
       <NavBar />
       {children}
     </main>

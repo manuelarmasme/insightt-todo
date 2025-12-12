@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Task } from '../types/task';
-import { getTasks, createTask as apiCreateTask, deleteTask as apiDeleteTask } from '../utils/api-client';
+import { getTasks, createTask as apiCreateTask, deleteTask as apiDeleteTask, updateTaskComplete as apiUpdateTaskComplete } from '../utils/api-client';
 import type { CreateTaskInput, TaskResponse } from '../schemas/task';
 
 interface TaskState {
@@ -12,6 +12,7 @@ interface TaskState {
   fetchTasks: () => Promise<void>;
   addTask: (taskData: CreateTaskInput) => Promise<TaskResponse>;
   deleteTask: (taskId: string) => Promise<void>;
+  toggleTaskComplete: (taskId: string, completed: boolean) => Promise<void>;
   setTasks: (tasks: Task[]) => void;
   clearError: () => void;
 }
@@ -34,7 +35,7 @@ export const useTaskStore = create<TaskState>((set) => ({
 
   addTask: async (taskData) => {
     const newTask = await apiCreateTask(taskData);
-    // Optimistically add to state without refetching
+
     set((state) => ({
       tasks: [newTask, ...state.tasks],
     }));
@@ -43,9 +44,21 @@ export const useTaskStore = create<TaskState>((set) => ({
 
   deleteTask: async (taskId) => {
     await apiDeleteTask(taskId);
-    // Optimistically remove from state without refetching
+
     set((state) => ({
       tasks: state.tasks.filter(task => task._id !== taskId),
+    }));
+  },
+
+  toggleTaskComplete: async (taskId, completed) => {
+    await apiUpdateTaskComplete(taskId, completed);
+
+    set((state) => ({
+      tasks: state.tasks.map(task => 
+        task._id === taskId 
+          ? { ...task, completed, updatedAt: new Date() }
+          : task
+      ),
     }));
   },
 
