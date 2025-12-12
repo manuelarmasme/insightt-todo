@@ -25,7 +25,15 @@ export function useAuth() {
         }
       });
 
-    } catch (err) {
+      // Sign out the user immediately after signup to prevent auto-login
+      // User should only be logged in after email verification
+      await signOut();
+
+    } catch (err: any) {
+      // Check if user already exists
+      if (err.name === 'UsernameExistsException') {
+        throw new Error('USER_EXISTS');
+      }
       throw new Error(err instanceof Error ? err.message : String('An unknown error occurred'));
     } finally {
       setIsLoading(false);
