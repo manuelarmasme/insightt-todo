@@ -25,7 +25,6 @@
     "aws-amplify": "^6.15.9",
     "aws-jwt-verify": "^5.1.1",
     "mongodb": "^7.0.0",
-    "mongoose": "^9.0.1",
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1",

@@ -2,9 +2,9 @@ import { CognitoJwtVerifier } from 'aws-jwt-verify';
 
 // Create a verifier instance for Cognito ID tokens
 const verifier = CognitoJwtVerifier.create({
-  userPoolId: process.env.DATABASE_AWS_COGNITO_USER_POOL_ID!,
+  userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID!,
   tokenUse: 'id',
-  clientId: process.env.DATABASE_AWS_COGNITO_CLIENT_ID!,
+  clientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID!,
 });
 
 export interface AuthResult {
