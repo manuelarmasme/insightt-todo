@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Task } from '../types/task';
-import { getTasks, createTask as apiCreateTask, deleteTask as apiDeleteTask, updateTaskComplete as apiUpdateTaskComplete } from '../utils/api-client';
+import { getTasks, createTask as apiCreateTask, deleteTask as apiDeleteTask, updateTaskComplete as apiUpdateTaskComplete, updateTask as apiUpdateTask } from '../utils/api-client';
 import type { CreateTaskInput, TaskResponse } from '../schemas/task';
 
 interface TaskState {
@@ -12,6 +12,7 @@ interface TaskState {
   fetchTasks: () => Promise<void>;
   addTask: (taskData: CreateTaskInput) => Promise<TaskResponse>;
   deleteTask: (taskId: string) => Promise<void>;
+  updateTask: (taskId: string, data: { title?: string }) => Promise<void>;
   toggleTaskComplete: (taskId: string, completed: boolean) => Promise<void>;
   setTasks: (tasks: Task[]) => void;
   clearError: () => void;
@@ -47,6 +48,18 @@ export const useTaskStore = create<TaskState>((set) => ({
 
     set((state) => ({
       tasks: state.tasks.filter(task => task._id !== taskId),
+    }));
+  },
+
+  updateTask: async (taskId, data) => {
+    await apiUpdateTask(taskId, data);
+
+    set((state) => ({
+      tasks: state.tasks.map(task => 
+        task._id === taskId 
+          ? { ...task, ...data, updatedAt: new Date() }
+          : task
+      ),
     }));
   },
 
