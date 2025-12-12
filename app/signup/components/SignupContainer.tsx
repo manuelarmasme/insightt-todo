@@ -59,12 +59,12 @@ export default function SignupContainer() {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err: any) {
       // Check if user already exists
-      if (err.message === 'USER_EXISTS') {
+      if (err.message === "USER_EXISTS") {
         setToastMessage("Account already exists. Please sign in instead.");
         setShowToast(true);
         // Redirect to login after 2 seconds
         setTimeout(() => {
-          router.push('/');
+          router.push("/");
         }, 2000);
       } else {
         setToastMessage("Sign up failed. Please try again.");
