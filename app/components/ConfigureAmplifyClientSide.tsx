@@ -8,8 +8,12 @@ const amplifyConfig = {
   Auth: {
     Cognito: {
       userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || "us-east-2_ZL2lM5oZj",
-      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || "6tjncv073cekve21q5mmitvmh3",
-      identityPoolId: process.env.NEXT_PUBLIC_IDENTITY_POOL_ID || "us-east-2:9f3f4d64-d23f-47c1-9914-0ffd5d42fe52",
+      userPoolClientId:
+        process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID ||
+        "6tjncv073cekve21q5mmitvmh3",
+      identityPoolId:
+        process.env.NEXT_PUBLIC_IDENTITY_POOL_ID ||
+        "us-east-2:9f3f4d64-d23f-47c1-9914-0ffd5d42fe52",
       loginWith: {
         email: true,
       },
