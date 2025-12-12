@@ -8,7 +8,7 @@ import { Card } from "@mui/material";
 import Error from "../ui/error";
 
 export default function TaskContainer() {
-  const { tasks, status, error, fetchTasks } = useTaskStore();
+  const { tasks, status, fetchTasks } = useTaskStore();
 
   useEffect(() => {
     fetchTasks();
