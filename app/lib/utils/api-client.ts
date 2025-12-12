@@ -87,6 +87,23 @@ export async function getTasks(): Promise<TaskResponse[]> {
 }
 
 /**
+ * Update task completion status
+ * @param taskId - The ID of the task to update
+ * @param completed - The new completion status
+ */
+export async function updateTaskComplete(taskId: string, completed: boolean): Promise<void> {
+  const response = await fetchWithAuth(`/api/tasks?id=${taskId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ completed }),
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to update task' }));
+    throw new Error(error.error || 'Failed to update task');
+  }
+}
+
+/**
  * Delete a task
  * @param taskId - The ID of the task to delete
  */

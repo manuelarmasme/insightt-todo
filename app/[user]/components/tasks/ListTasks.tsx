@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { Task } from "../../../lib/types/task";
 import DeleteTaskDialog from "./DeleteTaskDialog";
+import ToggleTaskComplete from "./ToggleTaskComplete";
 
 interface ListTasksProps {
   tasks: Task[];
@@ -16,6 +17,12 @@ export default function ListTasks({ tasks }: ListTasksProps) {
       </section>
     );
   }
+
+  // Sort tasks: incomplete first, completed at bottom
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (a.completed === b.completed) return 0;
+    return a.completed ? 1 : -1;
+  });
 
   return (
     <>
@@ -40,15 +47,19 @@ export default function ListTasks({ tasks }: ListTasksProps) {
         }}
       >
         <section className="space-y-3">
-          {tasks.map((task) => (
-            <article
+          {sortedTasks.map((task) => (
+            <ul
               key={task._id}
               className="rounded-xl border border-slate-200 bg-white/80 p-4 shadow-sm shadow-indigo-50"
             >
-              <header className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-slate-900">
+              <li className="flex items-center justify-between">
+                <h2
+                  className={`text-lg font-semibold line-clamp-2 truncate ${
+                    task.completed ? "text-emerald-600" : "text-slate-900"
+                  }`}
+                >
                   {task.title}
-                </h3>
+                </h2>
                 <div className="flex items-center gap-2">
                   <span
                     className={`text-xs font-medium uppercase tracking-wide ${
@@ -57,10 +68,14 @@ export default function ListTasks({ tasks }: ListTasksProps) {
                   >
                     {task.completed ? "Completed" : "Open"}
                   </span>
+                  <ToggleTaskComplete
+                    taskId={task._id}
+                    completed={task.completed}
+                  />
                   <DeleteTaskDialog taskId={task._id} />
                 </div>
-              </header>
-            </article>
+              </li>
+            </ul>
           ))}
         </section>
       </Box>
