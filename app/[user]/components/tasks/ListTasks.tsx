@@ -29,7 +29,7 @@ export default function ListTasks({ tasks }: ListTasksProps) {
     <>
       <Box
         sx={{
-          maxHeight: "600px",
+          maxHeight: "480px",
           overflowY: "auto",
           pr: 1,
           "&::-webkit-scrollbar": {
