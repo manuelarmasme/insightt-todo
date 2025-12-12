@@ -6,21 +6,39 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sandbox": "eval \"$(aws configure export-credentials --format env)\" && pnpm ampx sandbox"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^6.13.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "aws-amplify": "^6.15.9",
+    "aws-jwt-verify": "^5.1.1",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.1",
     "next": "16.0.8",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.19.0",
+    "@aws-amplify/backend-cli": "^1.8.1",
+    "@aws-amplify/cli": "^14.2.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "aws-cdk-lib": "2.216.0",
+    "constructs": "^10.0.0",
+    "esbuild": "^0.27.1",
     "eslint": "^9",
     "eslint-config-next": "16.0.8",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.21.0",
+    "typescript": "^5.0.0"
   }
 }
