@@ -55,9 +55,10 @@ export default function VerifyEmailContainer() {
         setFormData({ email: "", code: "" });
         router.push("/");
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setToastMessage(
-        err instanceof Error ? err.message : "An unexpected error occurred"
+        "Email verification failed. Please check the code and try again."
       );
 
       setShowToast(true);
