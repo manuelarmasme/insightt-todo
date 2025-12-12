@@ -3,8 +3,12 @@ import { z } from 'zod';
 // Schema for creating a new task
 export const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
-  description: z.string().max(500, 'Description must be less than 500 characters').optional(),
   completed: z.boolean().optional().default(false)
+});
+
+export const updateTaskSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters').optional(),
+  completed: z.boolean().optional()
 });
 
 // Schema for task response from database
@@ -12,7 +16,6 @@ export const taskResponseSchema = z.object({
   _id: z.string(),
   userId: z.string(),
   title: z.string(),
-  description: z.string().optional(),
   completed: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date()
