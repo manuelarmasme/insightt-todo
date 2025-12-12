@@ -44,9 +44,10 @@ export default function EditTaskDialog({ task }: EditTaskDialogProps) {
 
   const handleCloseDialog = () => {
     if (!isUpdating) {
-      setOpenDialog(false);
+      // Reset state before closing to prevent focus issues
       setTitle(task.title);
       setErrors({});
+      setOpenDialog(false);
     }
   };
 
@@ -117,6 +118,7 @@ export default function EditTaskDialog({ task }: EditTaskDialogProps) {
         aria-labelledby="edit-dialog-title"
         fullWidth
         maxWidth="sm"
+        disableRestoreFocus
       >
         <DialogTitle id="edit-dialog-title">Edit Task</DialogTitle>
         <DialogContent>
