@@ -39,11 +39,11 @@ export default function UserTasksPage() {
   }, [loadTasks]);
 
   return (
-    <section className="w-full min-h-screen flex flex-col gap-4 p-4 lg:p-8 bg-slate-50">
-      <NavBar />
-      <TaskContainer onTaskCreated={loadTasks} />
+    <section className="w-full flex flex-col gap-4 p-4 lg:p-8">
+      {/* <NavBar />
+      <TaskContainer onTaskCreated={loadTasks} /> */}
 
-      <div className="rounded-3xl border border-slate-100 bg-white px-6 py-5 shadow-sm shadow-slate-200">
+      <div className="rounded-3xl border border-slate-100 px-6 py-5 shadow-sm shadow-slate-200">
         {status === "loading" && (
           <p className="text-sm text-slate-500">Loading tasks…</p>
         )}
@@ -52,7 +52,7 @@ export default function UserTasksPage() {
           <p className="text-sm font-medium text-rose-600">{message}</p>
         )}
 
-        {status === "idle" && <ListTasks tasks={tasks} />}
+        {/* {status === "idle" && <ListTasks tasks={tasks} />} */}
       </div>
     </section>
   );
