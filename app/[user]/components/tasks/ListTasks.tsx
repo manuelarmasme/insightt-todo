@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { Task } from "../../../lib/types/task";
 import DeleteTaskDialog from "./DeleteTaskDialog";
 import ToggleTaskComplete from "./ToggleTaskComplete";
+import EditTaskDialog from "./EditTaskDialog";
 
 interface ListTasksProps {
   tasks: Task[];
@@ -72,6 +73,7 @@ export default function ListTasks({ tasks }: ListTasksProps) {
                     taskId={task._id}
                     completed={task.completed}
                   />
+                  <EditTaskDialog task={task} />
                   <DeleteTaskDialog taskId={task._id} />
                 </div>
               </li>

@@ -87,6 +87,23 @@ export async function getTasks(): Promise<TaskResponse[]> {
 }
 
 /**
+ * Update a task
+ * @param taskId - The ID of the task to update
+ * @param data - The task data to update (title, etc.)
+ */
+export async function updateTask(taskId: string, data: { title?: string }): Promise<void> {
+  const response = await fetchWithAuth(`/api/tasks?id=${taskId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to update task' }));
+    throw new Error(error.error || 'Failed to update task');
+  }
+}
+
+/**
  * Update task completion status
  * @param taskId - The ID of the task to update
  * @param completed - The new completion status

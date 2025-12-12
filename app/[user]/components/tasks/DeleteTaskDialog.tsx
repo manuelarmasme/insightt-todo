@@ -82,6 +82,7 @@ export default function DeleteTaskDialog({ taskId }: { taskId: string }) {
         onClose={handleCloseDialog}
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
+        disableRestoreFocus
       >
         <DialogTitle id="delete-dialog-title">Delete Task</DialogTitle>
         <DialogContent>
