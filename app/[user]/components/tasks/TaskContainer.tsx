@@ -1,54 +1,35 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import CreateTaskForm from "./CreateTaskForm";
-import { getTasks } from "@/app/lib/utils/api-client";
-import { Task } from "@/app/lib/types/task";
+import { useTaskStore } from "@/app/lib/stores/taskStore";
 import ListTasks from "./ListTasks";
+import Loading from "../../loading";
 
-type FetchStatus = "idle" | "loading" | "error";
 export default function TaskContainer() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [status, setStatus] = useState<FetchStatus>("loading");
-  const [message, setMessage] = useState<string>("");
-
-  const loadTasks = useCallback(async () => {
-    setStatus("loading");
-    setMessage("");
-
-    try {
-      const result = await getTasks();
-      setTasks(result);
-      setStatus("idle");
-    } catch (error) {
-      const text =
-        error instanceof Error ? error.message : "Unable to load tasks";
-      setMessage(text);
-      setStatus("error");
-    }
-  }, []);
+  const { tasks, status, error, fetchTasks } = useTaskStore();
 
   useEffect(() => {
-    const handle = Promise.resolve().then(() => loadTasks());
-
-    return () => {
-      handle.catch(() => undefined);
-    };
-  }, [loadTasks]);
+    fetchTasks();
+  }, [fetchTasks]);
 
   return (
     <section className="flex flex-col gap-4">
-      <CreateTaskForm onTaskCreated={loadTasks} />
-      <div className="rounded-3xl border border-slate-100 px-6 py-5 shadow-sm shadow-slate-200">
-        {status === "loading" && (
-          <p className="text-sm text-slate-500">Loading tasks…</p>
-        )}
+      {(status === "loading" || status === "idle") && (
+        <Loading message="Loading your tasks..." />
+      )}
 
-        {status === "error" && (
-          <p className="text-sm font-medium text-rose-600">{message}</p>
-        )}
+      {status === "error" && (
+        <p className="text-sm font-medium text-rose-600">{error}</p>
+      )}
 
-        {status === "idle" && <ListTasks tasks={tasks} />}
-      </div>
+      {status === "done" && (
+        <>
+          <CreateTaskForm />
+          <div className="rounded-3xl border border-slate-100 px-6 py-5 shadow-sm shadow-slate-200">
+            <ListTasks tasks={tasks} />
+          </div>
+        </>
+      )}
     </section>
   );
 }

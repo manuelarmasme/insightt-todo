@@ -12,16 +12,13 @@ import {
   Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { createTask } from "@/app/lib/utils/api-client";
+import { useTaskStore } from "@/app/lib/stores/taskStore";
 import { createTaskSchema } from "@/app/lib/schemas/task";
 import { handleApiError } from "@/app/lib/utils/api-client";
 import z from "zod";
 
-interface CreateTaskFormProps {
-  onTaskCreated?: () => void;
-}
-
-export default function CreateTaskForm({ onTaskCreated }: CreateTaskFormProps) {
+export default function CreateTaskForm() {
+  const addTask = useTaskStore((state) => state.addTask);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [toastMessage, setToastMessage] = useState("");
@@ -50,10 +47,8 @@ export default function CreateTaskForm({ onTaskCreated }: CreateTaskFormProps) {
         return;
       }
 
-      // Create task via API
-      await createTask(validatedData.data);
-
-      onTaskCreated?.();
+      // Create task and add to store (no refetch needed)
+      await addTask(validatedData.data);
 
       // Reset form on success
       setFormData({ title: "", completed: false });
@@ -101,28 +96,28 @@ export default function CreateTaskForm({ onTaskCreated }: CreateTaskFormProps) {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            className="flex flex-row w-full items-center justify-start gap-2"
+            className="flex flex-row w-full items-start justify-start gap-2"
           >
-            <TextField
-              label="Task Title"
-              fullWidth
-              margin="normal"
-              value={formData.title}
-              onChange={handleChange("title")}
-              placeholder="Enter a task "
-              error={!!errors.title}
-              disabled={isLoading}
-              helperText={errors.title}
-            />
+            <div className="flex-1">
+              <TextField
+                label="Task Title"
+                fullWidth
+                value={formData.title}
+                onChange={handleChange("title")}
+                placeholder="Enter a task "
+                error={!!errors.title}
+                disabled={isLoading}
+                helperText={errors.title}
+              />
+            </div>
 
             <Button
               type="submit"
               variant="outlined"
-              size="small"
               disabled={isLoading}
-              className="h-full"
+              className="h-14 min-w-14 mt-2"
             >
-              {isLoading ? <CircularProgress /> : <AddIcon />}
+              {isLoading ? <CircularProgress size={24} /> : <AddIcon />}
             </Button>
           </Box>
         </CardContent>
