@@ -87,6 +87,21 @@ export async function getTasks(): Promise<TaskResponse[]> {
 }
 
 /**
+ * Delete a task
+ * @param taskId - The ID of the task to delete
+ */
+export async function deleteTask(taskId: string): Promise<void> {
+  const response = await fetchWithAuth(`/api/tasks?id=${taskId}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to delete task' }));
+    throw new Error(error.error || 'Failed to delete task');
+  }
+}
+
+/**
  * Handle API errors and check if user needs to re-authenticate
  */
 export function handleApiError(error: unknown): string {
