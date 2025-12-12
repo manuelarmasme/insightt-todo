@@ -8,29 +8,17 @@ import {
   Button,
   CircularProgress,
   Box,
-  Typography,
   Snackbar,
   Alert,
-  Checkbox,
-  FormControlLabel,
-  Paper,
-  IconButton,
-  Collapse,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import AddTaskIcon from "@mui/icons-material/AddTask";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import AddIcon from "@mui/icons-material/Add";
-import { createTask } from "@/app/lib/utils/api-client";
+import { useTaskStore } from "@/app/lib/stores/taskStore";
 import { createTaskSchema } from "@/app/lib/schemas/task";
 import { handleApiError } from "@/app/lib/utils/api-client";
 import z from "zod";
 
-interface CreateTaskFormProps {
-  onTaskCreated?: () => void;
-}
-
-export default function CreateTaskForm({ onTaskCreated }: CreateTaskFormProps) {
+export default function CreateTaskForm() {
+  const addTask = useTaskStore((state) => state.addTask);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [toastMessage, setToastMessage] = useState("");
@@ -38,10 +26,8 @@ export default function CreateTaskForm({ onTaskCreated }: CreateTaskFormProps) {
   const [toastSeverity, setToastSeverity] = useState<"success" | "error">(
     "success"
   );
-  const [isExpanded, setIsExpanded] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
     completed: false,
   });
 
@@ -61,22 +47,14 @@ export default function CreateTaskForm({ onTaskCreated }: CreateTaskFormProps) {
         return;
       }
 
-      // Create task via API
-      await createTask(validatedData.data);
+      // Create task and add to store (no refetch needed)
+      await addTask(validatedData.data);
 
       // Reset form on success
-      setFormData({ title: "", description: "", completed: false });
+      setFormData({ title: "", completed: false });
       setToastMessage("Task created successfully!");
       setToastSeverity("success");
       setShowToast(true);
-
-      // Collapse form after successful creation
-      setTimeout(() => setIsExpanded(false), 500);
-
-      // Callback to refresh task list
-      if (onTaskCreated) {
-        onTaskCreated();
-      }
     } catch (err) {
       const errorMessage = handleApiError(err);
       setToastMessage(errorMessage);
@@ -111,220 +89,39 @@ export default function CreateTaskForm({ onTaskCreated }: CreateTaskFormProps) {
     setShowToast(false);
   };
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   return (
     <>
-      <Paper
-        elevation={3}
-        sx={{
-          maxWidth: 700,
-          mx: "auto",
-          mb: 4,
-          borderRadius: 2,
-          overflow: "hidden",
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        }}
-      >
-        <Box
-          sx={{
-            p: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            cursor: "pointer",
-          }}
-          onClick={toggleExpand}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <AddIcon sx={{ color: "white", fontSize: 28 }} />
-            <Typography
-              variant="h6"
-              sx={{
-                color: "white",
-                fontWeight: 600,
-                letterSpacing: 0.5,
-              }}
+      <Card className="rounded-lg">
+        <CardContent>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            className="flex flex-row w-full items-start justify-start gap-2"
+          >
+            <div className="flex-1">
+              <TextField
+                label="Task Title"
+                fullWidth
+                value={formData.title}
+                onChange={handleChange("title")}
+                placeholder="Enter a task "
+                error={!!errors.title}
+                disabled={isLoading}
+                helperText={errors.title}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              variant="outlined"
+              disabled={isLoading}
+              className="h-14 min-w-14 mt-2"
             >
-              Create New Task
-            </Typography>
+              {isLoading ? <CircularProgress size={24} /> : <AddIcon />}
+            </Button>
           </Box>
-          <IconButton
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleExpand();
-            }}
-            sx={{ color: "white" }}
-          >
-            {isExpanded ? <CloseIcon /> : <AddTaskIcon />}
-          </IconButton>
-        </Box>
-
-        <Collapse in={isExpanded}>
-          <Card
-            sx={{
-              boxShadow: "none",
-              borderRadius: 0,
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Box component="form" onSubmit={handleSubmit}>
-                <TextField
-                  label="Task Title"
-                  fullWidth
-                  margin="normal"
-                  required
-                  disabled={isLoading}
-                  value={formData.title}
-                  onChange={handleChange("title")}
-                  error={!!errors.title}
-                  helperText={errors.title || "Maximum 200 characters"}
-                  placeholder="Enter a clear and concise task title..."
-                  InputProps={{
-                    sx: {
-                      borderRadius: 2,
-                    },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "&:hover fieldset": {
-                        borderColor: "#667eea",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                      },
-                    },
-                  }}
-                />
-
-                <TextField
-                  label="Description (Optional)"
-                  fullWidth
-                  margin="normal"
-                  multiline
-                  rows={4}
-                  disabled={isLoading}
-                  value={formData.description}
-                  onChange={handleChange("description")}
-                  error={!!errors.description}
-                  helperText={errors.description || "Maximum 500 characters"}
-                  placeholder="Add more details about your task..."
-                  InputProps={{
-                    sx: {
-                      borderRadius: 2,
-                    },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "&:hover fieldset": {
-                        borderColor: "#667eea",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                      },
-                    },
-                  }}
-                />
-
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.completed}
-                      onChange={handleChange("completed")}
-                      disabled={isLoading}
-                      sx={{
-                        color: "#667eea",
-                        "&.Mui-checked": {
-                          color: "#667eea",
-                        },
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography variant="body2" color="text.secondary">
-                      Mark as completed
-                    </Typography>
-                  }
-                  sx={{ mt: 1, mb: 2 }}
-                />
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 2,
-                    mt: 3,
-                    flexDirection: { xs: "column", sm: "row" },
-                  }}
-                >
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                    disabled={isLoading}
-                    startIcon={
-                      isLoading ? (
-                        <CircularProgress size={20} color="inherit" />
-                      ) : (
-                        <CheckCircleOutlineIcon />
-                      )
-                    }
-                    sx={{
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontSize: 16,
-                      fontWeight: 600,
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #5568d3 0%, #614a8f 100%)",
-                        transform: "translateY(-2px)",
-                        boxShadow: "0 6px 20px rgba(102, 126, 234, 0.4)",
-                      },
-                      transition: "all 0.3s ease",
-                    }}
-                  >
-                    {isLoading ? "Creating..." : "Create Task"}
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="outlined"
-                    fullWidth
-                    disabled={isLoading}
-                    onClick={() => {
-                      setFormData({
-                        title: "",
-                        description: "",
-                        completed: false,
-                      });
-                      setErrors({});
-                    }}
-                    sx={{
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontSize: 16,
-                      fontWeight: 600,
-                      borderColor: "#667eea",
-                      color: "#667eea",
-                      "&:hover": {
-                        borderColor: "#5568d3",
-                        backgroundColor: "rgba(102, 126, 234, 0.04)",
-                      },
-                    }}
-                  >
-                    Clear
-                  </Button>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Collapse>
-      </Paper>
+        </CardContent>
+      </Card>
 
       <Snackbar
         open={showToast}
