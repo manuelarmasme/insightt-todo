@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/app/lib/hooks/useAuth";
 import { Logout } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 export default function NavBar() {
@@ -15,21 +15,35 @@ export default function NavBar() {
   };
 
   return (
-    <header className="w-full flex px-4 flex-row items-center justify-between bg-gray-600 py-3 rounded-2xl mb-6">
-      <div className="text-dark font-bold">My todo app</div>
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        backgroundColor: "rgba(71, 85, 105, 1)",
+        borderRadius: "16px",
+        marginBottom: "24px",
+      }}
+    >
+      <Toolbar>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1, fontWeight: 600 }}
+        >
+          My todo app
+        </Typography>
 
-      <Button
-        size="small"
-        variant="contained"
-        color="primary"
-        disabled={isLoading}
-        onClick={handleLogout}
-      >
-        <span className="flex items-center gap-2">
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          disabled={isLoading}
+          onClick={handleLogout}
+          endIcon={<Logout />}
+        >
           Logout
-          <Logout />
-        </span>
-      </Button>
-    </header>
+        </Button>
+      </Toolbar>
+    </AppBar>
   );
 }
