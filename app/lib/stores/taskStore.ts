@@ -16,6 +16,7 @@ interface TaskState {
   toggleTaskComplete: (taskId: string, completed: boolean) => Promise<void>;
   setTasks: (tasks: Task[]) => void;
   clearError: () => void;
+  resetStore: () => void;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
@@ -78,4 +79,6 @@ export const useTaskStore = create<TaskState>((set) => ({
   setTasks: (tasks) => set({ tasks }),
   
   clearError: () => set({ error: null }),
+
+  resetStore: () => set({ tasks: [], status: 'idle', error: null }),
 }));
