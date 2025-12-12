@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Task } from '../types/task';
-import { getTasks, createTask as apiCreateTask } from '../utils/api-client';
+import { getTasks, createTask as apiCreateTask, deleteTask as apiDeleteTask } from '../utils/api-client';
 import type { CreateTaskInput, TaskResponse } from '../schemas/task';
 
 interface TaskState {
@@ -11,6 +11,7 @@ interface TaskState {
   // Actions
   fetchTasks: () => Promise<void>;
   addTask: (taskData: CreateTaskInput) => Promise<TaskResponse>;
+  deleteTask: (taskId: string) => Promise<void>;
   setTasks: (tasks: Task[]) => void;
   clearError: () => void;
 }
@@ -38,6 +39,14 @@ export const useTaskStore = create<TaskState>((set) => ({
       tasks: [newTask, ...state.tasks],
     }));
     return newTask;
+  },
+
+  deleteTask: async (taskId) => {
+    await apiDeleteTask(taskId);
+    // Optimistically remove from state without refetching
+    set((state) => ({
+      tasks: state.tasks.filter(task => task._id !== taskId),
+    }));
   },
 
   setTasks: (tasks) => set({ tasks }),
