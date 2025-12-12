@@ -56,10 +56,9 @@ export default function SignupContainer() {
 
         setFormData({ name: "", email: "", password: "" });
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      setToastMessage(
-        err instanceof Error ? err.message : "An unexpected error occurred"
-      );
+      setToastMessage("Sign up failed. Please try again.");
       setShowToast(true);
     }
   };

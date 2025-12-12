@@ -57,10 +57,9 @@ export default function LoginContainer() {
           router.push(`/${user.userId}`);
         }
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      setToastMessage(
-        err instanceof Error ? err.message : "An unexpected error occurred"
-      );
+      setToastMessage("Login failed. Please check your credentials.");
       setShowToast(true);
     }
   };
